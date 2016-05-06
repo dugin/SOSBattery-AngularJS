@@ -60,14 +60,15 @@ used to vertically center elements, may need modification if you're not using de
 
 #tabela {
      float:left;
-    width:50%;
+    width:100%;
   
 }
 
 
 #editavel {
      float:right;
-    width:49%;
+    width:59%;
+    visibility:hidden;
   
 }
 
@@ -79,6 +80,14 @@ used to vertically center elements, may need modification if you're not using de
  font-weight:500;
    font-size: 16px;
    line-height: 20px;
+}
+
+.col-md-1 {
+
+    width: 11%;
+
+    padding-right:2em;
+
 }
 
 

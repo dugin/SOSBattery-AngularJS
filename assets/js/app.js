@@ -1,3 +1,3 @@
 
 
-angular.module('sosbatterydb', ['index.controllers', 'search.controllers' , 'firebase'])
+angular.module('sosbatterydb', ['search.controllers', 'firebase', 'index.controllers', 'angularGeoFire'])

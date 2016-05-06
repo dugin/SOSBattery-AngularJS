@@ -40,6 +40,8 @@
 <body ng-controller="searchCtrl">
 
 
+   
+
     <div class="container">
         <div class="row">
             <div class="col-xs-8 col-xs-offset-2">
@@ -115,6 +117,9 @@
 
     <br>
     <br>
+
+   
+
     <div id="tabela" style="visibility:hidden" class="panel panel-default panel-table">
         <div id="table-scroll">
             <div class="panel-body">
@@ -161,25 +166,36 @@
                     <div class="panel-body">
                         <form class="form-horizontal mystyle" role="form">
                             <div class="form-group row">
-                                <div class="col-sm-3">
+                                <div class="col-md-2">
                                     <img src="{{imgURL}}" width="90" height="90"  />
                                 </div>
-                                    <label for="inputNome" class="col-sm-1 control-label">Nome</label>
-                                    <div class="col-sm-8">
+                                    <label for="inputNome" class="col-md-1 control-label">Nome</label>
+                                    <div class="col-md-8">
                                         <input type="text" ng-model="nome" class="form-control" id="inputNome" />
                                     </div>
                                 <br />
                                 <br />
                                 
-                                <label for="inputTipo" class="col-sm-1 control-label">Tipo</label>
-                                <div class="col-sm-4">
+                                <label for="inputTipo" class="col-md-1 control-label">Tipo</label>
+                                <div class="col-md-8">
                                     <input type="text" ng-model="tipo" class="form-control" id="inputTipo" />
+                                </div>
+                                <br />
+                                <br />
+
+                                <label for="inputCoordX" class="col-md-1 control-label">Coord</label>
+                                <div class="col-md-3">
+                                    <input type="text" ng-model="coordX" class="form-control" id="inputCoordX">
+                                </div>
+                               
+                                <div class="col-md-3">
+                                    <input  type="text" ng-model="coordY" class="form-control" id="inputCoordY">
                                 </div>
                                    
                                 </div>
                             <div class="form-group">
-                                <label for="inputEndereco" class="col-md-2 control-label">Endereço</label>
-                                <div class="col-sm-9">
+                                <label for="inputEndereco" class="col-md-1 control-label">Endereço</label>
+                                <div class="col-sm-10">
                                     <input type="text" ng-model="end" class="form-control" id="inputEndereco" />
                                 </div>
                             </div>
@@ -196,7 +212,7 @@
                                         <input type="text" ng-model="cidade" class="form-control" id="inputCidade">
                                     </div>
 
-                                    <div class="col-md-2">
+                                    <div class="col-md-1">
                                         <input type="text" ng-model="estado" class="form-control" id="inputEstado">
                                     
                                 </div>
@@ -205,19 +221,12 @@
 
                             <div class="form-group row">
        
-                                <label for="inputImgURL" class="col-md-1 control-label">URL da  imagem</label>
-                                <div class="col-md-7">
+                                <label for="inputImgURL" class="col-md-3 col-md-pull-1 control-label">URL da  imagem</label>
+                                <div class="col-md-9 col-md-pull-1">
                                     <input type="text" ng-model="imgURL" class="form-control" id="inputImgURL">
 
                                 </div>
-                                <label for="inputCoordX" class="col-md-1 control-label">Coord</label>
-                                <div class="col-md-3">
-                                    <input type="text" ng-model="coordX" class="form-control" id="inputCoordX">
-                                </div>
-                                <label for="inputCoordY" class="col-md-8 control-label"></label>
-                                <div class="col-md-3">
-                                    <input type="text" ng-model="coordY" class="form-control" id="inputCoordY">
-                                </div>
+                               
 
                             </div>
 
@@ -236,36 +245,72 @@
 
                             </div>
 
+                           
+
+                               <center><b style="font-size:16px">Horário de Funcionamento</b></center> 
+                            <div class="form-group row ">
+                                <label for="inputSegSex" class="col-md-2 control-label">Seg-Sex</label>
+                                <div class="col-md-4">
+                                    <input type="text" ng-model="segsex" class="form-control" id="inputSegSex">
+                                </div>
+                                <label for="inputSegSex2" class="col-md-1 control-label">2ª hr</label>
+                                <div class="col-md-4">
+                                    <input type="text" ng-model="segsex2" class="form-control" id="inputSegSex2">
+                                </div>
+                            </div>
+                                <div class="form-group row">
+                                    <label for="inputSab" class="col-md-2 control-label">Sábado</label>
+                                    <div class="col-md-4">
+                                        <input type="text" ng-model="sab" class="form-control" id="inputSab">
+                                    </div>
+                                    <label for="inputSab2" class="col-md-1 control-label">2ª hr</label>
+                                    <div class="col-md-4">
+                                        <input type="text" ng-model="sab2" class="form-control" id="inputSab2">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="inputDom" class="col-md-2 control-label">Domingo</label>
+                                    <div class="col-md-4">
+                                        <input type="text" ng-model="dom" class="form-control" id="inputDom">
+                                    </div>
+                                    <label for="inputDom2" class="col-md-1 control-label">2ª hr</label>
+                                    <div class="col-md-4">
+                                        <input type="text" ng-model="dom2" class="form-control" id="inputDom2">
+                                    </div>
+                                </div>
+
+                                    
+
                             <div class="form-group row">
                                 <label for="inputIphone" class="col-md-1 control-label" >Cabo Iphone</label>
                                 <div class="col-md-1">
-                                    <input type="checkbox"  ng-model="cbIphoneAlt" class="form-control" id="inputIphone">
+                                    <input type="checkbox"  ng-model="cbIphoneAlt"  class="form-control" id="inputIphone">
                                 </div>
                                 <label for="inputAndroid" class="col-md-1 control-label">Cabo Android</label>
                                 <div class="col-md-1">
-                                    <input type="checkbox" ng-model="cbAndroidAlt" class="form-control" id="inputAndroid">
+                                    <input type="checkbox" ng-model="cbAndroidAlt"   class="form-control" id="inputAndroid">
                                 </div>
                                 <label for="inputWifi" class="col-md-1 control-label">Wifi</label>
                                 <div class="col-md-1">
-                                    <input type="checkbox" ng-model="wifiAlt" class="form-control" id="inputWifi">
+                                    <input type="checkbox" ng-model="wifiAlt"   class="form-control" id="inputWifi">
                                 </div>
                                 <div ng-if="wifiAlt" >
                                     <label for="inputWifiSSID" class="col-md-1 control-label">SSID</label>
-                                    <div class="col-md-5">
-                                        <input type="text" ng-model="wifiSSID" class="form-control" id="inputWifiSSID">
+                                    <div class="col-md-2">
+                                        <input type="text" ng-model="wifiSSID"  class="form-control" id="inputWifiSSID">
                                     </div>
                                 </div>
                                 <div ng-if="wifiAlt" >
                                     <label for="inputWifiSenha" class="col-md-1 control-label">Senha</label>
-                                    <div class="col-md-5">
-                                        <input type="text" ng-model="wifiSSID" class="form-control" id="inputWifiSenha">
+                                    <div class="col-md-2">
+                                        <input type="text" ng-model="wifiSenha" class="form-control" id="inputWifiSenha">
                                     </div>
                                 </div>
                             </div>
 
                                 <div class="form-group">
                                     <div class="col-md-8 col-lg-offset-2">
-                                        <button type="submit" class="btn btn-default col-md-12">Alterar</button>
+                                        <button type="submit" ng-click="onAlter()" class="btn btn-default col-md-12">Alterar</button>
 
                                     </div>
                                 </div>
@@ -277,25 +322,39 @@
         </div>
     
 
+    <!-- Javascript -->
+    <script src="assets/js/angular.js"></script>
+    <script src="assets/js/jquery-1.11.1.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery.backstretch.min.js"></script>
+    <script src="assets/js/bootstrap-waitingfor.js"></script>
+    <script src="assets/js/bootstrap-waitingfor.min.js"></script>
+   
+    <!-- Imports -->
+    <script src="assets/js/app.js"> </script>
 
+    <!-- Background img -->
+    <script src="assets/js/scripts.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
+
+    <!-- GeoFire -->
+    <script src="https://cdn.firebase.com/libs/geofire/4.0.0/geofire.min.js"></script>
+
+    <script src="assets/js/angularfire.min.js"></script>
+
+    <script src="assets/js/angularGeoFire.js"></script>
+
+
+    <!-- Controllers -->
+    <script src="assets/js/controllers/index.js"></script>
+    <script src="assets/js/controllers/search.js"></script>
+
+   
 </body>
+
+ 
    
 </html>
 
- <!-- Javascript -->
-<script src="assets/js/angular.js"></script>
-<script src="assets/js/app.js"> </script>
-<script src="assets/js/jquery-1.11.1.min.js"></script>
-<script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/js/jquery.backstretch.min.js"></script>
-<script src="assets/js/scripts.js"></script>
-<script src="assets/js/controllers/index.js"></script>
-<script src="assets/js/controllers/search.js"> </script>
-
-
-   
-
-<!-- Firebase -->
-<script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
-<!-- AngularFire -->
-<script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
