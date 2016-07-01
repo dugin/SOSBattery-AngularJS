@@ -1,0 +1,381 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br" ng-app="insert.controllers">
+<head>
+
+    <title>Cadastro de Estabelecimento</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="assets/css/autocomplete.css">
+
+   
+
+    <style>
+        /* all map containers must be full height */
+        /* all map containers must be full height */
+      
+
+
+        #map {
+
+            height: 640px;
+        }
+        
+        input[type="text"]{
+
+            padding: 3px;
+            color:green;
+              font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+           
+          
+
+        } 
+
+        input[type="text"]:focus{
+          outline: 0;
+	background: #fff;
+    border: 1px solid green;
+    -moz-box-shadow: none; -webkit-box-shadow: none; box-shadow: none;
+        }
+      
+       
+        button.btn {
+            height: 50px;
+            margin: 0;
+            padding: 0 20px;
+            vertical-align: middle;
+            background: #4aaf51;
+            border: 0;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-weight: 300;
+            line-height: 50px;
+            color: #fff;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+            text-shadow: none;
+            -moz-box-shadow: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            -o-transition: all .3s;
+            -moz-transition: all .3s;
+            -webkit-transition: all .3s;
+            -ms-transition: all .3s;
+            transition: all .3s;
+        }
+
+            button.btn:hover {
+                opacity: 0.6;
+                color: #fff;
+            }
+
+            button.btn:active {
+                outline: 0;
+                opacity: 0.6;
+                color: #fff;
+                -moz-box-shadow: none;
+                -webkit-box-shadow: none;
+                box-shadow: none;
+            }
+
+            button.btn:focus {
+                outline: 0;
+                opacity: 0.6;
+                background: #4aaf51;
+                color: #fff;
+            }
+
+            button.btn:active:focus, button.btn.active:focus {
+                outline: 0;
+                opacity: 0.6;
+                background: #4aaf51;
+                color: #fff;
+            }
+
+
+        .controls {
+            margin: 1em;
+            background-color: #fff;
+            border-radius: 3px;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            height: 35px;
+            margin-left: 17px;
+            margin-top: 10px;
+            outline: none;
+            padding: 0 11px 0 13px;
+            text-overflow: ellipsis;
+            width: 600px;
+        }
+
+            .controls:focus {
+                border-color: #4d90fe;
+            }
+    </style>
+</head>
+<body ng-controller="insertCtrl">
+
+
+    <div class="container-fluid">
+
+      
+
+        <center>
+            <input style="color:black" class="controls" type="text" ng-change="onPlaceTyped()" g-places-autocomplete force-selection="true" ng-model="autocomplete " placeholder="Entre com a localização" />
+        </center>
+         
+
+        
+       
+            <div class="map col-md-6">
+               
+
+                <div   map-lazy-load="https://maps.google.com/maps/api/js"
+                     map-lazy-load-params="{{googleMapsUrl}}">
+
+                    <ng-map id="map" center="{{coordenadas}}" zoom="{{zoom}}">
+                        <marker position="{{coordenadasLoja}}"  animation="Animation.BOUNCE"></marker>
+                    </ng-map>
+                </div>
+               <!-- <div class="google-map-canvas" ng-model="map" id="map"> -->
+                </div>
+            
+       
+            <div class="col-sm-6  panel panel-default">
+
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <br />
+                        <div class="col-md-2">
+                            <img src="{{imgURL}}" width="90" height="90" />
+                        </div>
+                        <label for="inputNome" class="col-md-1 control-label">Nome</label>
+                        <div class="col-md-8">
+                            <input type="text" ng-model="nome" class="form-control" id="inputNome" />
+                        </div>
+
+                       
+                        <br />
+                        <br />
+
+                        <br />
+
+
+                        <label for="inputCoordX" class="col-md-1 control-label">Coord</label>
+                        <div class="col-md-4">
+                            <input type="text" ng-model="coordX" class="form-control" id="inputCoordX">
+                        </div>
+
+                        <div class="col-md-4">
+                            <input type="text" ng-model="coordY" class="form-control" id="inputCoordY">
+                        </div>
+
+
+
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEndereco" class="col-md-2 control-label">Endereço</label>
+                        <div class="col-sm-10">
+                            <input type="text" ng-model="end" class="form-control" id="inputEndereco" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+
+
+                        <label for="inputBairro" class="col-md-1 control-label">Bairro</label>
+                        <div class="col-md-4">
+                            <input type="text" ng-model="bairro" class="form-control" id="inputBairro">
+                        </div>
+                        <label for="inputCidade" class="col-md-1 control-label">Cidade</label>
+                        <div class="col-md-4">
+                            <input type="text" ng-model="cidade" class="form-control" id="inputCidade">
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <input type="text" ng-model="estado" class="form-control" id="inputEstado">
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+
+                        <label for="inputImgURL" class="col-md-3 col-md-pull-1 control-label">URL da  img</label>
+                        <div class="col-md-9 col-md-pull-1">
+                            <input type="text" ng-model="imgURL" class="form-control" id="inputImgURL">
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="form-group row">
+
+
+                        <label for="inputCriado" class="col-md-1 control-label">Criado</label>
+                        <div class="col-md-4">
+                            <input type="text" ng-model="criado" class="form-control" id="inputCriado">
+                        </div>
+
+                        <label for="inputTipo" class="col-md-1 control-label">Tipo</label>
+                        <div class="col-md-5">
+                            <input type="text" ng-model="tipo" class="form-control" id="inputTipo" />
+                        </div>
+                       
+
+
+                    </div>
+
+
+
+                    <center><b style="font-size:16px">Horário de Funcionamento</b></center>
+                    <div class="form-group row ">
+                        <label for="inputSegSex" class="col-md-2 control-label">Seg-Sex</label>
+                        <div class="col-md-4">
+                            <input type="text" ng-model="segsex" class="form-control" id="inputSegSex">
+                        </div>
+                        <label for="inputSegSex2" class="col-md-2 control-label">2ª hr</label>
+                        <div class="col-md-4">
+                            <input type="text" ng-model="segsex2" class="form-control" id="inputSegSex2">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="inputSab" class="col-md-2 control-label">Sábado</label>
+                        <div class="col-md-4">
+                            <input type="text" ng-model="sab" class="form-control" id="inputSab">
+                        </div>
+                        <label for="inputSab2" class="col-md-2 control-label">2ª hr</label>
+                        <div class="col-md-4">
+                            <input type="text" ng-model="sab2" class="form-control" id="inputSab2">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="inputDom" class="col-md-2 control-label">Domingo</label>
+                        <div class="col-md-4">
+                            <input type="text" ng-model="dom" class="form-control" id="inputDom">
+                        </div>
+                        <label for="inputDom2" class="col-md-2 control-label">2ª hr</label>
+                        <div class="col-md-4">
+                            <input type="text" ng-model="dom2" class="form-control" id="inputDom2">
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group row">
+                        <label for="inputIphone" class="col-md-1 control-label">Cabo Iphone</label>
+                        <div class="col-md-1">
+                            <input type="checkbox" ng-model="cbIphone" class="form-control" id="inputIphone">
+                        </div>
+                        <label for="inputAndroid" class="col-md-1 control-label">Cabo Android</label>
+                        <div class="col-md-1">
+                            <input type="checkbox" ng-model="cbAndroid" class="form-control" id="inputAndroid">
+                        </div>
+                        <label for="inputWifi" class="col-md-1 control-label">Wifi</label>
+                        <div class="col-md-1">
+                            <input type="checkbox" ng-model="wifi" class="form-control" id="inputWifi">
+                        </div>
+                        <div ng-if="wifi">
+                            <label for="inputWifiSSID" class="col-md-1 control-label">SSID</label>
+                            <div class="col-md-2">
+                                <input type="text" ng-model="wifiSSID" class="form-control" id="inputWifiSSID">
+                            </div>
+
+
+                            <label for="inputWifiSenha" class="col-md-1 control-label">Senha</label>
+                            <div class="col-md-2">
+                                <input type="text" ng-model="wifiSenha" class="form-control" id="inputWifiSenha">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-8 col-lg-offset-2">
+                            <button type="submit" ng-click="onInsert()" class="btn btn-default col-md-12">Inserir</button>
+
+                        </div>
+                    </div>
+                </form>
+
+
+            </div><!--/col-5-->
+
+        </div>
+
+    <div id="myModal" class="modal fade in">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header success">
+
+                    <a style="float:right" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span></a>
+                    <h3>Atenção</h3>
+
+                </div>
+                <div class="modal-body">
+                    <h4>Estabelecimento inserido com sucesso!</h4>
+
+                </div>
+                <div class="modal-footer">
+
+
+                    <button class="btn btn-success" data-dismiss="modal"><span class="glyphicon glyphicon-check"></span> OK</button>
+
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dalog -->
+    </div><!-- /.modal -->
+    
+   
+    <!-- Javascript -->
+    <script src="assets/js/angular.js"></script>
+    <script src="assets/js/jquery-1.11.1.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery.backstretch.min.js"></script>
+    <script src="assets/js/bootstrap-waitingfor.js"></script>
+    <script src="assets/js/bootstrap-waitingfor.min.js"></script>
+
+    
+
+    <!-- Background img -->
+    <script src="assets/js/scripts.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
+
+    <!-- GeoFire -->
+    <script src="https://cdn.firebase.com/libs/geofire/4.0.0/geofire.min.js"></script>
+
+    <script src="assets/js/angularfire.min.js"></script>
+
+    <script src="assets/js/angularGeoFire.js"></script>
+
+   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKV00aef6G4QnNPeKtypAE6w8b-rta7VQ&libraries=places&signed_in=true"></script>
+          
+
+    <!-- Google map directives -->
+    <script src="assets/js/ng-map.min.js"></script>
+    <script src="assets/js/autocomplete.js"></script>
+
+
+    <!-- Controllers -->
+    
+    <script src="assets/js/controllers/insert.js"></script>
+
+   
+</body>
+</html>
