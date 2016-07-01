@@ -1,4 +1,4 @@
-﻿angular.module('index.controllers', [])
+﻿angular.module('index.controllers', ['firebase'])
 
 
 .controller('indexCtrl', function ($scope) {

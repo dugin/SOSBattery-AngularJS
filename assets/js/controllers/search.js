@@ -1,46 +1,145 @@
 
 
-angular.module('search.controllers', [])
+angular.module('search.controllers', ['firebase', 'angularGeoFire'])
 
 
-.controller('searchCtrl', function ($scope, $firebaseArray, $log) {
+.controller('searchCtrl', function ($scope, $firebaseArray, $geofire, $log) {
 
-    // URL para firebase e geofire
-    const estURL = "https://flickering-heat-3899.firebaseio.com/estabelecimentosTemp/";
-    const coordURL = "https://flickering-heat-3899.firebaseio.com/coordenadasTemp/";
+    // URL para firebase e geofire das sugestões de estabelecimentos
+    const sugestaoURL = "https://sosbatterytest.firebaseio.com/estabelecimentosTemp/";
+    const sugestaoCoordURL = "https://sosbatterytest.firebaseio.com/coordenadasTemp/";
 
-    const FirebaseRef = new Firebase(estURL);
+    // URL para firebase e geofire principais
+    const mainURL = "https://sosbatterytest.firebaseio.com/estabelecimentos/";
+    const mainCoordURL = "https://sosbatterytest.firebaseio.com/coordenadas/";
    
+
+    let FirebaseRef;
+    let $GeofireRef;
+
+    let coordURL;
+    let URL;
+   
+
     let coordenadas;
 
+    $scope.searchTerm = "";
 
+    $scope.onTyping = () => {
+
+       
+
+        if ($scope.searchTerm.length != 0)
+            $("#btnSearch").prop("disabled", false);
+        else
+            $("#btnSearch").prop("disabled", true);
+
+    }
+
+ 
+    $scope.myFunct =  (keyEvent) => {
+        if (keyEvent.which === 13) {
+
+            if ($scope.searchTerm.length != 0)
+                $scope.onSearch();
+           
+        }
+            
+    }
+
+    
 
     $scope.onSearch = () => {
 
+
+        $("#editavel").css('visibility', 'hidden');
+        //move a tabela para dar espaço ao item a ser modificado
+        $("#tabela").css('width', '100%');
+
+        
+
         waitingDialog.show('Buscando dados...',{ progressType: 'success'});
         
-     
+        $scope.isBDPrincipal = $('#toggle').prop('checked');
+
+
+        if ($scope.isBDPrincipal){
+
+            FirebaseRef = new Firebase(mainURL);
+
+            $GeofireRef = $geofire(new Firebase(mainCoordURL));
+
+            coordURL = mainCoordURL;
+            URL = mainURL;
+        }
+        else{
+
+            FirebaseRef = new Firebase(sugestaoURL);
+
+            $GeofireRef = $geofire(new Firebase(sugestaoCoordURL));
+
+            coordURL = sugestaoCoordURL;
+            URL = sugestaoURL;
+
+        }
+
+       
         // parametros de busca
         let searchParam = new searchParameters($scope.caboAndroid, $scope.caboIphone, $scope.wifi, $scope.restaurante, $scope.loja, $scope.bar, radioType($scope));
 
-        let fbArray = $firebaseArray(FirebaseRef);
+        let paramCabo = fbQuery(searchParam.cabo);
 
-        fbArray.$loaded()
-        .then(function (x) {
-            waitingDialog.hide();
-            $("#tabela").css('visibility', 'visible');
-        })
-        .catch(function (error) {
-      console.log("Error:", error);
-        });
+        let paramCategoria = fbQuery(searchParam.categoria);
 
-        $scope.estabelecimentos = fbArray;
+     
+        searchTermQuery(FirebaseRef, $scope, $firebaseArray);
+      
+    }
+
+    $scope.onSelectRemove = (est) => {
+
+        $scope.toRemove = est;
+    }
+
+    $scope.onRemove = () => {
+
+        $('#myModal').modal('hide');
+
+       
+
+        let lojaToRemove = $scope.toRemove;
+
+        let FirebaseRefRemove = new Firebase(URL + lojaToRemove.id);
+
+
+        let $GeofireRefRemove = $GeofireRef;
+
+
+        let onCompleteRemoval = (error) => {
+            if (error) {
+                $log.error('Erro ao remover');
+            } else {
+
+                // Remove "some_key" location from forge
+                $GeofireRefRemove.$remove(lojaToRemove.id)
+                    .catch(function (err) {
+                        $log.error(err);
+                    });
+
+            }
+        };
+
+        FirebaseRefRemove.remove(onCompleteRemoval);
 
       
+      
+
     }
 
 
     $scope.onEdit = (est) => {
+
+      
 
         //move a tabela para dar espaço ao item a ser modificado
         $("#tabela").css('width', '40%');
@@ -62,10 +161,10 @@ angular.module('search.controllers', [])
         $scope.coordY = est.coordenadas[1];
         $scope.criado = est.createdAt;
         $scope.modificado = est.modifiedAt;
-        $scope.cbAndroidAlt = est.cabo;
-        $scope.cbIphoneAlt = est.cabo;
+        $scope.cbAndroidAlt = est.cabo.android;
+        $scope.cbIphoneAlt = est.cabo.iphone;
         $scope.wifiAlt = est.wifi;
-        $scope.wifiSSID = est.wifi_ssid;
+        $scope.wifiSSID = est.wifi_SSID;
         $scope.wifiSenha = est.wifi_senha;
 
         $scope.segsex = est.hr_open[0] + " - " + est.hr_close[0];
@@ -91,34 +190,40 @@ angular.module('search.controllers', [])
 
     $scope.onAlter = () => {
 
+       
+
         //inicializa os campos que podem ter undefined
-        if (testUndefined(  $scope.cbIphoneAlt))
-            $scope.cbIphoneAlt = false;
-        if (testUndefined($scope.cbAndroidAlt))
-            $scope.cbAndroidAlt = false;
-        if (testUndefined($scope.wifiAlt))
-            $scope.wifiAlt = false;
-        if (testUndefined($scope.wifiSSID))
+        if (testUndefined($scope.cbIphone))
+            $scope.cbIphone = false;
+        if (testUndefined($scope.cbAndroid))
+            $scope.cbAndroid = false;
+        if (testUndefined($scope.wifi) || !$scope.wifi) {
+            $scope.wifi = false;
             $scope.wifiSSID = "";
-        if (testUndefined($scope.wifiSenha))
-        $scope.wifiSenha = "";
+            $scope.wifiSenha = "";
+        }
+        else {
+            $scope.wifiSSID = $('#inputWifiSSID').val();
+            $scope.wifiSenha = $('#inputWifiSenha').val();
+        }
 
+
+
+        let FirebaseRefMod = new Firebase(URL + $scope.id);
+
+       
+        let $GeofireRefMod = $geofire(new Firebase(coordURL + $scope.id));
 
        
 
-        let FirebaseRefMod = new Firebase(estURL + $scope.id);
-
-       
-        let GeofireRef = new GeoFire(new Firebase(coordURL + $scope.id));
-
-        $log.info(coordURL + $scope.id);
-
-        let coord = new Array($scope.coordX, $scope.coordY);
+        let coord = [Number($scope.coordX), Number($scope.coordY)];
 
         let cabo = {
             android: $scope.cbAndroidAlt,
             iphone: $scope.cbIphoneAlt
         };
+
+       
 
         // hora de abertura padrão ( 00 - 00)
         // tem 6 campos pois alguns estabelecimentos abrem e fecham duas vezes ao dia
@@ -139,6 +244,7 @@ angular.module('search.controllers', [])
             $scope.criado, dataModificada, cabo,
             $scope.wifiAlt, $scope.wifiSSID, $scope.wifiSenha, $scope.id, hr_open, hr_close);
         
+       
 
         let onCompleteUpdate = (error)  => {
             if (error) {
@@ -147,11 +253,12 @@ angular.module('search.controllers', [])
             
                 // compara a coordenada inicial e se foi modificada para então mudar no geofire também
                 if (coordenadas[0] != coord[0] || coordenadas[1] != coord[1]) {
-                    GeofireRef.set($scope.id, [coord[0], coord[1]]).then(function () {
 
-                    }, function (error) {
-                        window.alert("Error: " + error);
-                    });
+                    $GeofireRefMod.$set($scope.id, coord)
+                        .catch(function (err) {
+                            $log.error(err);
+                        });
+
                 }
             
             }
@@ -202,16 +309,107 @@ class estFirebase {
 class searchParameters {
 
     constructor(cbAndroid, cbIphone, wifi, restaurante, loja, bar, radioBtn) {
-        this.cbAndroid = cbAndroid;
-        this.cbIphone = cbIphone;
+        this.cabo = {
+            android: cbAndroid,
+            iphone: cbIphone
+        };
+        this.categoria = {
+            restaurante: restaurante,
+            loja: loja,
+            bar: bar
+        };
+      
         this.wifi = wifi;
-        this.restaurante = restaurante;
-        this.loja = loja;
-        this.bar = bar;
+       
         this.radioBtn = radioBtn;
     }
    
 }
+
+function fbQuery(searchParam) {
+
+    let param = [];
+    let i = 0;
+
+    for (var key in searchParam) {
+        if (searchParam.hasOwnProperty(key)) {
+
+            if (typeof (searchParam[key]) === "boolean") {
+                // variable is a boolean           
+                if (searchParam[key]) {
+                    param[i] = key;
+                    i++;
+            }
+            }
+        }
+    }
+
+    return param;
+
+}
+
+
+function query(estArray, cabo, wifi, cat) {
+
+    
+
+    for (var i in cabo) {
+        if (cabo.hasOwnProperty(i)) {
+            for (var i in cabo) {
+                if (cabo.hasOwnProperty(i)) {
+
+                }
+            }
+        }
+    }
+
+
+}
+
+function searchTermQuery(firebaseRef, $scope, $firebaseArray) {
+
+    let criterio = $('.search-panel span#search_concept').text();
+   
+
+    let query;
+
+    
+  
+    switch (criterio) {
+        case "Estabelecimento":
+            query = firebaseRef.orderByChild("nome").equalTo($scope.searchTerm);
+            break;
+
+        case "Bairro":
+            query = firebaseRef.orderByChild("bairro").equalTo($scope.searchTerm);
+            break;
+
+        case "Cidade":
+            query = firebaseRef.orderByChild("cidade").equalTo($scope.searchTerm);
+            break;
+
+        default:
+            query = firebaseRef;
+
+
+    }
+    
+    let fbQuery = $firebaseArray(query);
+
+    fbQuery.$loaded()
+       .then(function (x) {
+           waitingDialog.hide();
+           $("#tabela").css('visibility', 'visible');
+           $scope.estabelecimentos = x;
+       })
+       .catch(function (error) {
+           console.log("Error:", error);
+       });
+
+    
+
+}
+
 
             //função retorna 0 se for tudo, 1 se for ultimos criados, 2 se for ultimos modificados
 function radioType($scope) {
@@ -256,11 +454,29 @@ function testUndefined(variavel) {
 
 // faz com que o tipo de filtro seja modificado
 $(document).ready(function(e){
-    $('.search-panel .dropdown-menu').find('a').click(function(e) {
-		e.preventDefault();
-		var param = $(this).attr("href").replace("#","");
-		var concept = $(this).text();
-		$('.search-panel span#search_concept').text(concept);
-		$('.input-group #search_param').val(param);
+    $('.search-panel .dropdown-menu').find('a').click(function (e) {
+
+        $("#searchTerm").val("");
+        e.preventDefault();
+        var param = $(this).attr("href").replace("#","");
+        var concept = $(this).text();
+        $('.search-panel span#search_concept').text(concept);
+        $('.input-group #search_param').val(param);
+
+
+        $("#btnSearch").css('visibility', 'visible');
+
+        if ($('.search-panel span#search_concept').text().localeCompare("Tudo") == 0) {
+            $("#searchTerm").css('visibility', 'visible');
+            $("#searchTerm").prop("disabled", true);
+            $("#btnSearch").prop("disabled", false);
+        }
+        else {
+            $("#searchTerm").prop("disabled", false);
+            $("#searchTerm").css('visibility', 'visible');
+            $("#btnSearch").prop("disabled", true);
+        }
+
+
 	});
 });
